@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="CEIS.Api/CEIS.Api.csproj" />
+  <Project Path="CEIS.Application/CEIS.Application.csproj" />
+  <Project Path="CEIS.Domain/CEIS.Domain.csproj" />
+  <Project Path="CEIS.Infrastructure/CEIS.Infrastructure.csproj" />
+</Solution>
