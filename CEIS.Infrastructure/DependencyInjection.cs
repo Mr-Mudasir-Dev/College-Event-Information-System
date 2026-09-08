@@ -1,5 +1,7 @@
 ﻿using CEIS.Application.Interfaces;
+using CEIS.Application.Interfaces.Repositories;
 using CEIS.Infrastructure.Data;
+using CEIS.Infrastructure.Data.Repositories;
 using CEIS.Infrastructure.Identity;
 using CEIS.Infrastructure.Service;
 using Microsoft.AspNetCore.Identity;
@@ -31,8 +33,15 @@ namespace CEIS.Infrastructure
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
+            // UnitOfWork
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            // Servive
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+
+            // Repositories
+            services.AddScoped<IEventRepository, EventRepository>();
 
             return services;
         }

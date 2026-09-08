@@ -16,6 +16,7 @@ namespace CEIS.Infrastructure.Data
             (DbContextOptions<ApplicationDbContext>opt) : base(opt) { }
 
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<Event> Events { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
