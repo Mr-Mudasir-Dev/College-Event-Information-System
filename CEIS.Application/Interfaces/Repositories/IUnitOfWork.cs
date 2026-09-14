@@ -9,6 +9,7 @@ namespace CEIS.Application.Interfaces.Repositories
     public interface IUnitOfWork
     {
         public IEventRepository EventRepository { get; }
+        public IRegistrationRepository RegistrationRepository { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }

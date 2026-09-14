@@ -17,6 +17,7 @@ namespace CEIS.Infrastructure.Data
 
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Event> Events { get; set; }
+        public DbSet<Registration> Registrations { get; set; } 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

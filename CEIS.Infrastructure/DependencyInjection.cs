@@ -36,12 +36,13 @@ namespace CEIS.Infrastructure
             // UnitOfWork
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            // Servive
+            // Identity Service
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
             // Repositories
             services.AddScoped<IEventRepository, EventRepository>();
+            services.AddScoped<IRegistrationRepository, RegistrationRepository>();
 
             return services;
         }
