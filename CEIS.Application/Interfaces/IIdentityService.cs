@@ -1,4 +1,5 @@
 ﻿using CEIS.Application.Common.Models;
+using CEIS.Application.Features.Admin.Queries;
 using CEIS.Application.Features.Auth.Queries;
 using System;
 using System.Collections.Generic;
@@ -26,5 +27,8 @@ namespace CEIS.Application.Interfaces
         Task<string> GenerateRefreshTokenAsync(string userId);
         Task<AuthResult> RefreshTokenAsync(string refreshToken);
         Task RevokeRefreshTokenAsync(string refreshToken);
+        Task<IEnumerable<UserListDto>> GetAllUsersAsync();
+        Task<AuthResult> AssignRoleAsync(string userId, string newRole);
+        Task<AuthResult> ToggleUserStatusAsync(string userId, bool suspend);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using CEIS.Application.Common.Models;
+using CEIS.Application.Interfaces;
 using CEIS.Application.Interfaces.Repositories;
 using CEIS.Domain.Entity;
 using CEIS.Domain.Enum;
@@ -15,9 +16,11 @@ namespace CEIS.Application.Features.Events.Commands.CreateEvent
     public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, Result<int>>
     {
         private readonly IUnitOfWork _uow;
-        public CreateEventCommandHandler(IUnitOfWork uow)
+        private readonly IFileStorageService _fileStorageService;
+        public CreateEventCommandHandler(IUnitOfWork uow, IFileStorageService fileStorageService)
         {
             _uow = uow;
+            _fileStorageService = fileStorageService;
         }
 
         public async Task<Result<int>> Handle(CreateEventCommand request, CancellationToken cancellationToken)
@@ -25,6 +28,12 @@ namespace CEIS.Application.Features.Events.Commands.CreateEvent
             if (string.IsNullOrWhiteSpace(request.OrganizerId))
                 throw new UnauthorizedException();
 
+            string? bannerUrl = null;
+
+            if (request.BannerImage != null)
+            {
+                bannerUrl = await _fileStorageService.SaveFileAsync(request.BannerImage, "events", cancellationToken);
+            }
             var newEvent = new Event
             {
                 Title = request.Title,
@@ -34,7 +43,7 @@ namespace CEIS.Application.Features.Events.Commands.CreateEvent
                 Time = request.Time,
                 Venue = request.Venue,
                 MaxParticipants = request.MaxParticipants,
-                BannerImageUrl = request.BannerImageUrl,
+                BannerImageUrl = bannerUrl,
                 OrganizerId = request.OrganizerId,
                 Status = EventStatus.Pending
             };

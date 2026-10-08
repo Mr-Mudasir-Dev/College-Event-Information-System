@@ -34,6 +34,7 @@ namespace CEIS.Api.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Organizer")]
+        [Consumes("multipart/form-data")]
         public async Task<IActionResult> CreateEvent(CreateEventCommand cmd)
         {
             var organizerId = User.FindFirstValue(ClaimTypes.NameIdentifier);

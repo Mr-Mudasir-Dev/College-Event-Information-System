@@ -24,4 +24,8 @@
     <ProjectReference Include="..\CEIS.Infrastructure\CEIS.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>

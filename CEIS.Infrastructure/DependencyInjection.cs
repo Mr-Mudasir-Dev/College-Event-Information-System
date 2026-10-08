@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Identity.Client;
 
 namespace CEIS.Infrastructure
 {
@@ -36,13 +37,18 @@ namespace CEIS.Infrastructure
             // UnitOfWork
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            // Identity Service
+            // Service
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+            services.AddScoped<IFileStorageService, LocalFileStorageService>();
+            services.AddScoped<ICertificateGenerator, CertificateGenerator>();
 
             // Repositories
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<IRegistrationRepository, RegistrationRepository>();
+            services.AddScoped<IFeedbackRepository, FeedbackRepositoy>();
+            services.AddScoped<IMediaGalleryRepository, MediaGalleryRepository>();
+            services.AddScoped<ICertificateRepository, CertificateRepository>();
 
             return services;
         }

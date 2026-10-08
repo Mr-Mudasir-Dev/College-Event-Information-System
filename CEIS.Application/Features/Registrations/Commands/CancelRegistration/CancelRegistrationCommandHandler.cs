@@ -35,6 +35,7 @@ namespace CEIS.Application.Features.Registrations.Commands.CancelRegistration
             var eventDateTime = ev.Date.ToDateTime(ev.Time);
             if(eventDateTime <=  DateTime.UtcNow)
                 throw new ConflictException("Cannot cancel registration after the event has started.");
+
             registration.Status = RegistrationStatus.Cancelled;
             registration.UpdatedAt = DateTime.UtcNow;
 

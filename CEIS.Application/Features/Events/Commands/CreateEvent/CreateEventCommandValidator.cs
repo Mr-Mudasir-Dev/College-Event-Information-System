@@ -9,6 +9,8 @@ namespace CEIS.Application.Features.Events.Commands.CreateEvent
 {
     public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
     {
+        private readonly string[] _allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+        private const long MaxFileSize = 25 * 1024 * 1024; // 25 MB
         public CreateEventCommandValidator()
         {
             RuleFor(x => x.Title)
@@ -32,6 +34,23 @@ namespace CEIS.Application.Features.Events.Commands.CreateEvent
 
             RuleFor(x => x.MaxParticipants)
                 .GreaterThan(0).WithMessage("Max participants must be greater than zero.");
+
+            // BannerImage optional hai, lekin agar di gayi hai to validate karo
+            RuleFor(x => x.BannerImage!.Length)
+                .LessThanOrEqualTo(MaxFileSize)
+                .When(x => x.BannerImage != null)
+                .WithMessage("Banner image must not exceed 25 MB.");
+
+            RuleFor(x => x)
+                .Must(HaveValidExtension)
+                .When(x => x.BannerImage != null)
+                .WithMessage("Invalid image format. Allowed: jpg, jpeg, png, gif.");
+        }
+
+        private bool HaveValidExtension(CreateEventCommand command)
+        {
+            var ext = Path.GetExtension(command.BannerImage!.FileName).ToLowerInvariant();
+            return _allowedExtensions.Contains(ext);
         }
 
     }

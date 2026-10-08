@@ -1,4 +1,5 @@
 ﻿using CEIS.Application.Common.Models;
+using CEIS.Application.Features.Admin.Queries;
 using CEIS.Application.Features.Auth.Queries;
 using CEIS.Application.Interfaces;
 using CEIS.Domain.Entity;
@@ -23,6 +24,39 @@ namespace CEIS.Infrastructure.Identity
         {
             _context = context;
             _userManager = userManager;
+        }
+
+        public async Task<AuthResult> AssignRoleAsync(string userId, string newRole)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return new AuthResult
+                {
+                    Succeeded = false,
+                    Errors = new List<string> { "User not found." }
+                };
+            }
+
+            var currentRoles = await _userManager.GetRolesAsync(user);
+
+            if (currentRoles.Any())
+                await _userManager.RemoveFromRolesAsync(user, currentRoles);
+
+            var addRole = await _userManager.AddToRoleAsync(user, newRole);
+
+            if (!addRole.Succeeded)
+            {
+                return new AuthResult
+                {
+                    Succeeded = false,
+                    Errors = addRole.Errors.Select(e => e.Description).ToList()
+                };
+            }
+
+            return new AuthResult { Succeeded =  true };
+
         }
 
         public async Task<AuthResult> ChangePasswordAsync(string userId, string currentPassword, string newPassword)
@@ -75,6 +109,31 @@ namespace CEIS.Infrastructure.Identity
             return refreshToken.Token;
         }
 
+        public async Task<IEnumerable<UserListDto>> GetAllUsersAsync()
+        {
+            var users = _userManager.Users.ToList();
+            var result = new List<UserListDto>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                var isLockedOut = await _userManager.IsLockedOutAsync(user);
+
+                result.Add(new UserListDto
+                {
+                    UserId = user.Id,
+                    FullName = user.FullName,
+                    Email = user.Email!,
+                    Department = user.Department,
+                    EnrollmentNo = user.EnrollmentNo,
+                    Roles = roles,
+                    IsLockedOut = isLockedOut
+                });
+            }
+
+            return result;
+        }
+
         public async Task<CurrentUserDto?> GetUserByIdAsync(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -111,6 +170,13 @@ namespace CEIS.Infrastructure.Identity
                     Errors = new List<string> { "Invalid email or password." }
                 };
             }
+
+            if (await _userManager.IsLockedOutAsync(user))
+                return new AuthResult
+                {
+                    Succeeded = false,
+                    Errors = new List<string> { "Your account has been suspended. Contact admin." }
+                };
 
             var isPasswordValid = await _userManager.CheckPasswordAsync(user, password);
 
@@ -253,6 +319,35 @@ namespace CEIS.Infrastructure.Identity
                 _context.RefreshTokens.Remove(storedToken);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<AuthResult> ToggleUserStatusAsync(string userId, bool suspend)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return new AuthResult
+                {
+                    Succeeded = false,
+                    Errors = new List<string> { "User not found." }
+                };
+            }
+
+            if (suspend)
+                await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+
+            if (suspend)
+            {
+                // Bohot door ki date — practically permanent lockout jab tak Admin khud activate na kare
+                await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+            }
+            else
+            {
+                await _userManager.SetLockoutEndDateAsync(user, null);
+            }
+
+            return new AuthResult { Succeeded = true };
         }
     }
 }

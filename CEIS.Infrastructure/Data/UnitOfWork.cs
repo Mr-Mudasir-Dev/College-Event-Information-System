@@ -11,20 +11,29 @@ namespace CEIS.Infrastructure.Data
     {
         public IEventRepository EventRepository { get; }
         public IRegistrationRepository RegistrationRepository { get; }
+        public IFeedbackRepository FeedbackRepository { get; }
+        public IMediaGalleryRepository MediaGalleryRepository { get; }
+        public ICertificateRepository CertificateRepository { get; }
 
         private readonly ApplicationDbContext _context;
         public UnitOfWork(ApplicationDbContext context,
             IEventRepository eventRepository,
-            IRegistrationRepository registrationRepository)
+            IRegistrationRepository registrationRepository,
+            IFeedbackRepository feedbackRepository,
+            IMediaGalleryRepository mediaGalleryRepository,
+            ICertificateRepository certificateRepository)
         {
             _context = context;
             EventRepository = eventRepository;
             RegistrationRepository = registrationRepository;
+            FeedbackRepository = feedbackRepository;
+            MediaGalleryRepository = mediaGalleryRepository;
+            CertificateRepository = certificateRepository;
         }
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            return await _context.SaveChangesAsync();
+            return await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }

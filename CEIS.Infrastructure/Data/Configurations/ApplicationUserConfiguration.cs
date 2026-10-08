@@ -13,9 +13,9 @@ namespace CEIS.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
-            //builder.Property(u => u.FullName)
-            //.IsRequired()
-            //.HasMaxLength(100);
+            builder.Property(u => u.FullName)
+            .IsRequired()
+            .HasMaxLength(100);
 
             builder.Property(u => u.Department)
                 .IsRequired()

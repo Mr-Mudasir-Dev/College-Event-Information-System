@@ -12,5 +12,7 @@ namespace CEIS.Domain.Entity
         public int EventId { get; set; }
         public string StudentId { get; set; } = string.Empty;
         public RegistrationStatus Status { get; set; } = RegistrationStatus.Confirmed;
+        public bool IsAttended { get; set; } = false;
+        public DateTime? AttendedAt { get; set; }
     }
 }

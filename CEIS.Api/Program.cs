@@ -14,11 +14,14 @@ builder.Services.AddApplicationServices()
 
 var app = builder.Build();
 
+app.UseCors("AllowAngular");
+
 using (var scope = app.Services.CreateScope())
 {
     await CEIS.Infrastructure.Identity.RoleSeeder.SeedRolesAsync(scope.ServiceProvider);
+    await CEIS.Infrastructure.Data.AdminSeeder.SeedAdminAsync(scope.ServiceProvider);
 }
-
+app.UseStaticFiles();
 app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.

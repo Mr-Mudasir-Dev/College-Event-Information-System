@@ -7,9 +7,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Features\MediaGallery\Commands\**" />
+    <EmbeddedResource Remove="Features\MediaGallery\Commands\**" />
+    <None Remove="Features\MediaGallery\Commands\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Features\MediaGallery\Commands\DeleteMedia\DeleteMediaCommand.cs" />
+    <Compile Include="Features\MediaGallery\Commands\DeleteMedia\DeleteMediaCommandHandler.cs" />
+    <Compile Include="Features\MediaGallery\Commands\DeleteMedia\DeleteMediaCommandValidator.cs" />
+    <Compile Include="Features\MediaGallery\Commands\UploadMedia\UploadMediaCommand.cs" />
+    <Compile Include="Features\MediaGallery\Commands\UploadMedia\UploadMediaCommandHandler.cs" />
+    <Compile Include="Features\MediaGallery\Commands\UploadMedia\UploadMediaCommandValidator.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="15.1.3" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="10.0.0" />
     <PackageReference Include="MediatR" Version="14.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.13" />
   </ItemGroup>
 
   <ItemGroup>

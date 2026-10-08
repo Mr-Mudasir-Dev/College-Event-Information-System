@@ -36,6 +36,17 @@ namespace CEIS.Api.Extensions
                 });
             });
 
+            // Add Cors
+            services.AddCors(opt =>
+            {
+                opt.AddPolicy("AllowAngular", policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+                });
+            });
+
             return services;
         }
     }
