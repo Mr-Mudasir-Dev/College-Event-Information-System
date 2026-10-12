@@ -5,6 +5,8 @@ using CEIS.Application.Features.Events.Commands.CreateEvent;
 using CEIS.Application.Features.Events.Commands.EventDelete;
 using CEIS.Application.Features.Events.Commands.RejectEvent;
 using CEIS.Application.Features.Events.Commands.UpdateEvent;
+using CEIS.Application.Features.Events.Queries.FilterEvents;
+using CEIS.Application.Features.Events.Queries.GetAllEvents;
 using CEIS.Application.Features.Events.Queries.GetEventById;
 using CEIS.Application.Features.Events.Queries.GetEvents;
 using CEIS.Application.Features.Events.Queries.GetMyEvents;
@@ -29,6 +31,14 @@ namespace CEIS.Api.Controllers
         public EventsController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet("all")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllEvents()
+        {
+            var result = await _mediator.Send(new GetAllEventsQuery());
+            return Ok(ApiResponse<object>.SuccessResponse(result.Data));
         }
 
 
@@ -56,6 +66,18 @@ namespace CEIS.Api.Controllers
         {
             var result = await _mediator.Send(cmd);
             return Ok(ApiResponse<object>.SuccessResponse(result.Data, "Fetched successfully"));
+        }
+
+        [HttpGet("organizer/filter/events")]
+        [Authorize(Roles = "Organizer")]
+        public async Task<IActionResult> GetFilterEvents([FromQuery] FilterEventsQuery cmd)
+        {
+            var Organizer = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            cmd.OrganizerId = Organizer!;
+
+            var result = await _mediator.Send(cmd);
+            return Ok(ApiResponse<object>.SuccessResponse(result.Data));
         }
 
         [HttpPut("{id}/approve")]
@@ -110,6 +132,7 @@ namespace CEIS.Api.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Organizer")]
+        [Consumes("multipart/form-data")]
         public async Task<IActionResult> UpdateEvent(int id, UpdateEventCommand cmd)
         {
             cmd.EventId = id;

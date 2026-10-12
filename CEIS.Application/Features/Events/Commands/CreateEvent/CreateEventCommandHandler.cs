@@ -28,6 +28,11 @@ namespace CEIS.Application.Features.Events.Commands.CreateEvent
             if (string.IsNullOrWhiteSpace(request.OrganizerId))
                 throw new UnauthorizedException();
 
+            var ev = await _uow.EventRepository.GetTitleEvent(request.Title, cancellationToken);
+
+            if (ev != null)
+                throw new ConflictException("this event Title already taken");
+
             string? bannerUrl = null;
 
             if (request.BannerImage != null)

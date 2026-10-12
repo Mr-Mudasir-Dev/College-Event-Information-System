@@ -9,6 +9,8 @@ namespace CEIS.Application.Features.Events.Commands.UpdateEvent
 {
     public class UpdateEventCommandValidator : AbstractValidator<UpdateEventCommand>
     {
+        private readonly string[] _allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+        private const long MaxFileSize = 25 * 1024 * 1024;
         public UpdateEventCommandValidator()
         {
             RuleFor(x => x.EventId)
@@ -36,6 +38,16 @@ namespace CEIS.Application.Features.Events.Commands.UpdateEvent
 
             RuleFor(x => x.MaxParticipants)
                 .GreaterThan(0).WithMessage("Max participants must be greater than zero.");
+
+            RuleFor(x => x.BannerImage!.Length)
+            .LessThanOrEqualTo(MaxFileSize)
+            .When(x => x.BannerImage != null)
+            .WithMessage("Banner image must not exceed 5 MB.");
+
+            RuleFor(x => x)
+                .Must(c => _allowedExtensions.Contains(Path.GetExtension(c.BannerImage!.FileName).ToLowerInvariant()))
+                .When(x => x.BannerImage != null)
+                .WithMessage("Invalid image format. Allowed: jpg, jpeg, png, gif.");
         }
     }
 }
